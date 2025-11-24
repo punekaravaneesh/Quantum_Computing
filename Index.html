@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quantum Computing Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      background: radial-gradient(circle at center, #0a0a1a, #000);
+      overflow-x: hidden;
+      text-align: center;
+    }
+    h1 { font-size: 2.5em; color: #00fff2; margin-top: 60px; animation: fadeIn 1s ease forwards; }
+    p { font-size: 1.1em; color: #bbb; max-width: 800px; margin: 10px auto; animation: fadeIn 1s ease forwards; animation-delay: 0.3s; }
+    ul { text-align: left; max-width: 800px; margin: 10px auto; line-height: 1.6; }
+    li { margin-bottom: 8px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ringPulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
+
+    .ring {
+      position: fixed; top: 50%; left: 50%;
+      width: 500px; height: 500px;
+      border: 2px solid #00fff2; border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: ringPulse 6s infinite ease-in-out;
+      filter: blur(2px); z-index: -1;
+    }
+
+    .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 40px; animation: fadeInUp 1s ease forwards; animation-delay: 0.6s; }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(0,255,242,0.3);
+      border-radius: 15px;
+      width: 240px; height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      color: #00fff2; font-weight: 600; text-decoration: none; font-size: 1.1em;
+      transition: all 0.4s ease; cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,255,242,0.1);
+    }
+    .card:hover { background: rgba(0,255,242,0.1); box-shadow: 0 0 25px #00fff2, 0 0 40px #00fff2; transform: translateY(-10px); color: #fff; border-color: #00fff2; }
+
+    #content {
+      max-width: 950px; margin: 40px auto; background: rgba(255,255,255,0.05);
+      padding: 40px; border-radius: 12px; backdrop-filter: blur(6px);
+      display: none; animation: fadeIn 0.8s ease;
+    }
+
+    button {
+      background-color: #00fff2; border: none;
+      padding: 10px 20px; color: #000; font-weight: bold;
+      cursor: pointer; border-radius: 5px; margin: 10px 5px;
+      transition: 0.3s;
+    }
+    button:hover:not([disabled]) { background-color: #ff00ff; color: white; }
+    footer { color: #888; margin: 40px 0 20px; animation: fadeIn 1s ease forwards; animation-delay: 1s; }
+
+    @media (max-width: 768px) { .grid { flex-direction: column; } .card { width: 80%; height: 120px; } }
+  </style>
+</head>
+<body>
+  <div class="ring"></div>
+
+  <h1>🌌 Quantum Computing Portal</h1>
+  <p>Click any topic below to explore directly on this page.</p>
+
+  <div id="mainGrid" class="grid">
+    <div class="card" onclick="showInfo('computing')">🧠 What is Computing</div>
+    <div class="card" onclick="showInfo('superposition')">⚛️ Superposition</div>
+    <div class="card" onclick="showInfo('interference')">🌊 Interference</div>
+    <div class="card" onclick="showInfo('future')">🔮 The Future</div>
+    <div class="card" onclick="showInfo('summary')">🌟 Summary</div>
+    <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div>
+  </div>
+
+  <div id="content"></div>
+  <footer>Created with 💙 for Quantum Enthusiasts</footer>
+
+  <script>
+    const topics = {
+      computing: `
+        <h2>What is Quantum Computing?</h2>
+        <p>Quantum computing is an advanced field of technology that uses the laws of <strong>quantum mechanics</strong> to process information. Unlike classical computers, which use bits (0 or 1), quantum computers use <strong>qubits</strong> that can represent 0, 1, or both at once.</p>
+        <p>This property allows them to perform complex calculations that classical systems would take years to complete. Quantum computing explores the subatomic world where particles behave like waves, opening new ways to manipulate data.</p>
+        <ul>
+          <li><strong>Superposition:</strong> Enables qubits to exist in multiple states simultaneously.</li>
+          <li><strong>Entanglement:</strong> Links qubits so that the state of one instantly affects another, even across distances.</li>
+          <li><strong>Interference:</strong> Allows amplification of correct outcomes and cancellation of incorrect ones.</li>
+        </ul>
+        <p>Quantum computing can transform how we simulate molecules, encrypt data, and optimize complex systems.</p>
+      `,
+      superposition: `
+        <h2>Superposition</h2>
+        <p><strong>Superposition</strong> is one of the fundamental principles of quantum mechanics. It means that a quantum system (like a qubit) can exist in multiple states simultaneously.</p>
+        <p>For example, while a classical bit must be either 0 or 1, a qubit can be both at once until measured. This is similar to a spinning coin that shows both heads and tails in motion.</p>
+        <ul>
+          <li>Allows quantum computers to explore many possible solutions at the same time.</li>
+          <li>Gives quantum systems massive parallel processing capabilities.</li>
+          <li>When measured, the system "collapses" to a definite state (0 or 1).</li>
+        </ul>
+      `,
+      interference: `
+        <h2>Interference</h2>
+        <p>Interference occurs when quantum waves combine, either strengthening (constructive interference) or canceling (destructive interference) each other.</p>
+        <p>Quantum computers use this effect to eliminate wrong answers and enhance the right ones. This is crucial because qubits exist in multiple possible states until measured.</p>
+        <ul>
+          <li><strong>Constructive Interference:</strong> Reinforces the probability of correct outcomes.</li>
+          <li><strong>Destructive Interference:</strong> Cancels out incorrect results.</li>
+        </ul>
+      `,
+      future: `
+        <h2>The Future of Quantum Computing</h2>
+        <p>Quantum computing is still in its early stages, but its potential is vast. Researchers are developing stable, scalable qubits and reducing errors to make quantum computers more practical.</p>
+        <ul>
+          <li><strong>🔐 Cryptography:</strong> Future quantum systems could break traditional encryption, leading to <strong>quantum-safe security</strong>.</li>
+          <li><strong>💊 Drug Discovery:</strong> Simulating complex molecules to accelerate medical breakthroughs.</li>
+          <li><strong>🚚 Optimization:</strong> Solving logistics, supply chain, and financial optimization problems faster than ever.</li>
+          <li><strong>🤖 Artificial Intelligence:</strong> Speeding up machine learning and data classification.</li>
+        </ul>
+      `,
+      summary: `
+        <h2>Summary</h2>
+        <p>Quantum computing represents a major leap beyond classical technology. By leveraging quantum properties like <strong>superposition</strong>, <strong>entanglement</strong>, and <strong>interference</strong>, these systems can solve complex problems previously thought impossible.</p>
+        <p>Although challenges like error correction and qubit stability remain, global research is advancing rapidly. As quantum computers become more reliable, they could redefine fields such as cybersecurity, materials science, and artificial intelligence.</p>
+      `,
+      quiz: `
+        <h2>Quantum Computing Quiz</h2>
+        <div id="quizContainer"></div>
+        <p id="result"></p>
+      `
+    };
+
+    const quizQuestions = [
+      { q: "1. What is a qubit?", options: ["A classical bit", "A particle of light", "A quantum bit that can be 0 and 1 simultaneously", "A type of transistor"], correct: 2 },
+      { q: "2. What principle allows qubits to exist in multiple states?", options: ["Entanglement", "Superposition", "Classical logic", "Magnetism"], correct: 1 },
+      { q: "3. What does interference do in quantum computing?", options: ["Increases wrong answers", "Amplifies correct results", "Randomizes outputs", "Stores data"], correct: 1 },
+      { q: "4. Which company works on quantum computers?", options: ["IBM", "Instagram", "Netflix", "Spotify"], correct: 0 },
+      { q: "5. What temperature do quantum computers require?", options: ["Room temperature", "Boiling point", "Near absolute zero", "100°C"], correct: 2 },
+      { q: "6. What makes quantum computers powerful?", options: ["They are smaller", "They use electricity", "They use qubits and superposition", "They are cheaper"], correct: 2 },
+      { q: "7. What does entanglement mean?", options: ["Two qubits connected regardless of distance", "One qubit split in two", "Qubit vibration", "Error correction"], correct: 0 },
+      { q: "8. What field can benefit from quantum computing?", options: ["Cooking", "Chemistry", "Painting", "Farming"], correct: 1 },
+      { q: "9. What is the biggest challenge in quantum computing?", options: ["Speed", "Qubit stability", "Internet access", "Programming"], correct: 1 },
+      { q: "10. What might quantum computers improve?", options: ["Music quality", "Optimization problems", "Gaming graphics", "Smartphones"], correct: 1 }
+    ];
+
+    let score = 0;
+    let currentQuestion = 0;
+
+    function showInfo(topic) {
+      document.getElementById("mainGrid").style.display = "none";
+      const contentDiv = document.getElementById("content");
+      contentDiv.style.display = "block";
+      contentDiv.innerHTML = topics[topic] + `<br><button onclick="backToPortal()">⬅️ Back to Portal</button>`;
+      if (topic === "quiz") renderQuiz();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToPortal() {
+      document.getElementById("content").style.display = "none";
+      document.getElementById("mainGrid").style.display = "flex";
+      currentQuestion = 0;
+      score = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderQuiz() {
+      showQuestion(currentQuestion);
+    }
+
+    function showQuestion(index) {
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = "";
+      const q = quizQuestions[index];
+
+      const div = document.createElement("div");
+      div.innerHTML = `<p><strong>${q.q}</strong></p>`;
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(idx);
+        div.appendChild(btn);
+      });
+
+      container.appendChild(div);
+
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next ➡️";
+      nextBtn.disabled = true;
+      nextBtn.onclick = () => {
+        currentQuestion++;
+        if(currentQuestion < quizQuestions.length){
+          showQuestion(currentQuestion);
+        } else {
+          document.getElementById("quizContainer").innerHTML = "";
+          document.getElementById("result").innerHTML = `😊 <strong>Well done!</strong> Final Score: ${score}/${quizQuestions.length}`;
+        }
+      };
+      container.appendChild(nextBtn);
+
+      function selectAnswer(selectedIdx) {
+        const buttons = div.querySelectorAll("button");
+        buttons.forEach(b => b.disabled = true);
+        if(selectedIdx === q.correct) {
+          buttons[selectedIdx].style.backgroundColor = "#00ff88";
+          score++;
+        } else {
+          buttons[selectedIdx].style.backgroundColor = "#ff0044";
+          buttons[q.correct].style.backgroundColor = "#00ff88";
+        }
+        nextBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
