@@ -52,7 +52,7 @@
       transition: transform 0.3s;
     }
 
-    /* Top-Right Logo Container (New) */
+    /* Top-Right Logo Container (Existing) */
     .logo-container-right {
       position: absolute;
       top: 20px;
@@ -61,12 +61,30 @@
       transition: transform 0.3s;
     }
 
-    .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 40px; animation: fadeInUp 1s ease forwards; animation-delay: 0.6s; }
+    /* New CSS for main grid layout */
+    #mainGrid {
+        display: flex;
+        flex-direction: column; /* Stack the rows vertically */
+        align-items: center; /* Center the rows horizontally */
+        gap: 25px; /* Spacing between the rows */
+        padding: 40px;
+        animation: fadeInUp 1s ease forwards;
+        animation-delay: 0.6s;
+    }
+    
+    .card-row {
+        display: flex;
+        flex-wrap: wrap; /* Allows cards to wrap on smaller screens */
+        justify-content: center; /* Center cards within the row */
+        gap: 25px; /* Spacing between individual cards */
+    }
+    
     .card {
       background: rgba(255,255,255,0.05);
       border: 2px solid rgba(0,255,242,0.3);
       border-radius: 15px;
-      width: 240px; height: 160px;
+      width: 240px; /* Fixed width for desktop layout */
+      height: 160px;
       display: flex; align-items: center; justify-content: center;
       color: #00fff2; font-weight: 600; text-decoration: none; font-size: 1.1em;
       transition: all 0.4s ease; cursor: pointer;
@@ -89,7 +107,10 @@
     button:hover:not([disabled]) { background-color: #ff00ff; color: white; }
     footer { color: #888; margin: 40px 0 20px; animation: fadeIn 1s ease forwards; animation-delay: 1s; }
 
-    @media (max-width: 768px) { .grid { flex-direction: column; } .card { width: 80%; height: 120px; } }
+    @media (max-width: 768px) {
+        .card { width: 80%; height: 120px; }
+        .card-row { flex-direction: column; } /* Cards stack vertically on mobile */
+    }
   </style>
 </head>
 <body>
@@ -112,13 +133,20 @@
   <h1> Quantum Computing Portal</h1>
   <p>Click any topic below to explore directly on this page.</p>
 
-  <div id="mainGrid" class="grid">
-    <div class="card" onclick="showInfo('computing')">🧠 What is Quantum Computing</div>
-    <div class="card" onclick="showInfo('superposition')">⚛️ Superposition</div>
-    <div class="card" onclick="showInfo('interference')">🌊 Interference</div>
-    <div class="card" onclick="showInfo('future')">🔮 The Future</div>
-    <div class="card" onclick="showInfo('summary')">🌟 Summary</div>
-    <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div>
+  <!-- Modified Grid Structure for 4 Up, 2 Down -->
+  <div id="mainGrid">
+    <!-- Top Row (4 Cards) -->
+    <div class="card-row">
+        <div class="card" onclick="showInfo('computing')">🧠 What is Computing</div>
+        <div class="card" onclick="showInfo('superposition')">⚛️ Superposition</div>
+        <div class="card" onclick="showInfo('interference')">🌊 Interference</div>
+        <div class="card" onclick="showInfo('future')">🔮 The Future</div>
+        <div class="card" onclick="showInfo('summary')">🌟 Summary</div> <!-- MOVED HERE -->
+    </div>
+    <!-- Bottom Row (1 Card - formerly 2) -->
+    <div class="card-row">
+        <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div> <!-- ONLY QUIZ LEFT -->
+    </div>
   </div>
 
   <div id="content"></div>
@@ -261,4 +289,3 @@
   </script>
 </body>
 </html>
-
