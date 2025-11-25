@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Quantum Computing Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght<:400;600&display=swap" rel="stylesheet">
   <style>
+    /* Global Styles */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -14,10 +15,13 @@
       text-align: center;
     }
     h1 { font-size: 2.5em; color: #00fff2; margin-top: 60px; animation: fadeIn 1s ease forwards; }
+    h2 { color: #00fff2; border-bottom: 2px solid rgba(0,255,242,0.2); padding-bottom: 10px; margin-top: 20px; }
+    h3 { color: #00fff2; margin-top: 30px; } /* CHANGED: H3 color to blue */
     p { font-size: 1.1em; color: #bbb; max-width: 800px; margin: 10px auto; animation: fadeIn 1s ease forwards; animation-delay: 0.3s; }
-    ul { text-align: left; max-width: 800px; margin: 10px auto; line-height: 1.6; }
-    li { margin-bottom: 8px; }
+    ul { text-align: left; max-width: 800px; margin: 10px auto; line-height: 1.6; list-style-type: '⚡'; padding-left: 20px; }
+    li { margin-bottom: 8px; padding-left: 10px; }
 
+    /* Animations */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes ringPulse { 0% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.7; } }
@@ -31,73 +35,43 @@
       filter: blur(2px); z-index: -1;
     }
 
-    /* Common styles for logo images */
+    /* Logo Styles */
     .logo-container img, .logo-container-right img {
-      width: 80px; /* Set a consistent size */
-      height: auto;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0, 255, 242, 0.7); /* Subtle quantum glow */
+      width: 80px; height: auto; border: none; border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 255, 242, 0.7);
     }
-    .logo-container:hover, .logo-container-right:hover {
-        transform: scale(1.05);
-    }
-    
-    /* Top-Left Logo Container (Existing) */
-    .logo-container {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 100;
-      transition: transform 0.3s;
-    }
+    .logo-container:hover, .logo-container-right:hover { transform: scale(1.05); }
+    .logo-container { position: absolute; top: 20px; left: 20px; z-index: 100; transition: transform 0.3s; }
+    .logo-container-right { position: absolute; top: 20px; right: 20px; z-index: 100; transition: transform 0.3s; }
 
-    /* Top-Right Logo Container (Existing) */
-    .logo-container-right {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
-      transition: transform 0.3s;
-    }
-
-    /* New CSS for main grid layout */
+    /* Grid Layout */
     #mainGrid {
-        display: flex;
-        flex-direction: column; /* Stack the rows vertically */
-        align-items: center; /* Center the rows horizontally */
-        gap: 25px; /* Spacing between the rows */
-        padding: 40px;
-        animation: fadeInUp 1s ease forwards;
-        animation-delay: 0.6s;
+        display: flex; flex-direction: column; align-items: center;
+        gap: 25px; padding: 40px;
+        animation: fadeInUp 1s ease forwards; animation-delay: 0.6s;
     }
-    
     .card-row {
-        display: flex;
-        flex-wrap: wrap; /* Allows cards to wrap on smaller screens */
-        justify-content: center; /* Center cards within the row */
-        gap: 25px; /* Spacing between individual cards */
+        display: flex; flex-wrap: wrap; justify-content: center;
+        gap: 25px;
     }
-    
     .card {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid rgba(0,255,242,0.3);
-      border-radius: 15px;
-      width: 240px; /* Fixed width for desktop layout */
-      height: 160px;
-      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05); border: 2px solid rgba(0,255,242,0.3);
+      border-radius: 15px; width: 240px; height: 160px;
+      display: flex; align-items: center; justify-content: center; text-align: center;
       color: #00fff2; font-weight: 600; text-decoration: none; font-size: 1.1em;
       transition: all 0.4s ease; cursor: pointer;
       box-shadow: 0 0 20px rgba(0,255,242,0.1);
     }
     .card:hover { background: rgba(0,255,242,0.1); box-shadow: 0 0 25px #00fff2, 0 0 40px #00fff2; transform: translateY(-10px); color: #fff; border-color: #00fff2; }
 
+    /* Content Area */
     #content {
       max-width: 950px; margin: 40px auto; background: rgba(255,255,255,0.05);
       padding: 40px; border-radius: 12px; backdrop-filter: blur(6px);
-      display: none; animation: fadeIn 0.8s ease;
+      display: none; animation: fadeIn 0.8s ease; text-align: left;
     }
 
+    /* Buttons and Inputs */
     button {
       background-color: #00fff2; border: none;
       padding: 10px 20px; color: #000; font-weight: bold;
@@ -105,8 +79,31 @@
       transition: 0.3s;
     }
     button:hover:not([disabled]) { background-color: #ff00ff; color: white; }
+    button[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    input[type="text"] {
+        padding: 10px; border-radius: 5px; border: 1px solid #00fff2;
+        background: rgba(255,255,255,0.1); color: white; width: 90%;
+        margin-bottom: 15px;
+    }
+
+    /* LLM Output and Loader */
+    .llm-output {
+        margin-top: 20px; padding: 15px; border: 1px dashed #00fff2; /* CHANGED: Border to blue */
+        border-radius: 8px; background: rgba(0, 255, 242, 0.1); /* CHANGED: Background to blue */
+        min-height: 50px; color: #fff;
+    }
+    .loader {
+        border: 4px solid rgba(255, 255, 255, 0.3); border-top: 4px solid #00fff2;
+        border-radius: 50%; width: 20px; height: 20px;
+        animation: spin 1s linear infinite; display: none; margin: 10px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Footer */
     footer { color: #888; margin: 40px 0 20px; animation: fadeIn 1s ease forwards; animation-delay: 1s; }
 
+    /* Responsive Design */
     @media (max-width: 768px) {
         .card { width: 80%; height: 120px; }
         .card-row { flex-direction: column; } /* Cards stack vertically on mobile */
@@ -116,14 +113,12 @@
 <body>
   <div class="ring"></div>
 
-  <!-- Logo added to the top left -->
+  <!-- Logos -->
   <div class="logo-container">
     <a href="https://imgbb.com/">
       <img src="https://i.ibb.co/rRtDKjJ7/logo.jpg" alt="Quantum Logo">
     </a>
   </div>
-
-  <!-- Logo added to the top right -->
   <div class="logo-container-right">
     <a href="https://ibb.co/zTP44FK3">
       <img src="https://i.ibb.co/21ckkSXz/quantum-logo.jpg" alt="quantum-logo">
@@ -133,19 +128,17 @@
   <h1> Quantum Computing Portal</h1>
   <p>Click any topic below to explore directly on this page.</p>
 
-  <!-- Modified Grid Structure for 4 Up, 2 Down -->
+  <!-- Content Grid (5 Up, 1 Down) -->
   <div id="mainGrid">
-    <!-- Top Row (4 Cards) -->
     <div class="card-row">
         <div class="card" onclick="showInfo('computing')">🧠 What is Computing</div>
         <div class="card" onclick="showInfo('superposition')">⚛️ Superposition</div>
         <div class="card" onclick="showInfo('interference')">🌊 Interference</div>
         <div class="card" onclick="showInfo('future')">🔮 The Future</div>
-        <div class="card" onclick="showInfo('summary')">🌟 Summary</div> <!-- MOVED HERE -->
+        <div class="card" onclick="showInfo('summary')">🌟 Summary</div>
     </div>
-    <!-- Bottom Row (1 Card - formerly 2) -->
     <div class="card-row">
-        <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div> <!-- ONLY QUIZ LEFT -->
+        <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div>
     </div>
   </div>
 
@@ -153,6 +146,40 @@
   <footer>Created with 💙 for Quantum Enthusiasts</footer>
 
   <script>
+    // --- Global Configuration for Gemini API ---
+    const apiKey = "";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    // --- Utility Functions ---
+    // Generic fetch wrapper with exponential backoff
+    async function exponentialBackoffFetch(url, options, maxRetries = 5) {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (response.ok) {
+                    return response;
+                }
+                if (response.status === 429 && i < maxRetries - 1) {
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    // console.warn(`Rate limit hit, retrying in ${delay / 1000}s...`);
+                    continue;
+                }
+                throw new Error(`API call failed with status: ${response.status}`);
+            } catch (error) {
+                if (i === maxRetries - 1) {
+                    console.error("Fetch error after retries:", error);
+                    throw error;
+                }
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                // console.warn(`Fetch failed, retrying in ${delay / 1000}s...`);
+            }
+        }
+    }
+
+
+    // --- Core Data ---
     const topics = {
       computing: `
         <h2>What is Quantum Computing? </h2>
@@ -201,12 +228,18 @@
       `,
       quiz: `
         <h2>Quantum Computing Quiz</h2>
+        <div id="quizGeneratorUI">
+            <h3>✨ Generate a Custom Quiz</h3>
+            <input type="text" id="quizTopicInput" placeholder="Enter a quantum topic (e.g., 'Quantum Entanglement')" value="Quantum Entanglement">
+            <button onclick="generateNewQuiz()">✨ Generate Quiz (5 Qs)</button>
+            <div class="loader" id="quizLoader"></div>
+        </div>
         <div id="quizContainer"></div>
         <p id="result"></p>
       `
     };
 
-    const quizQuestions = [
+    let quizQuestions = [
       { q: "1. What is a qubit?", options: ["A classical bit", "A particle of light", "A quantum bit that can be 0 and 1 simultaneously", "A type of transistor"], correct: 2 },
       { q: "2. What principle allows qubits to exist in multiple states?", options: ["Entanglement", "Superposition", "Classical logic", "Magnetism"], correct: 1 },
       { q: "3. What does interference do in quantum computing?", options: ["Increases wrong answers", "Amplifies correct results", "Randomizes outputs", "Stores data"], correct: 1 },
@@ -220,14 +253,156 @@
     ];
 
     let score = 0;
+    let currentTopic = '';
     let currentQuestion = 0;
+
+    // --- LLM Feature 1: Concept Expander ---
+    async function generateConceptExplanation() {
+        const queryInput = document.getElementById('conceptQuery');
+        const llmOutput = document.getElementById('llmOutput');
+        const loader = document.getElementById('llmLoader');
+        const button = document.getElementById('llmButton');
+
+        const userQuery = queryInput.value.trim();
+        if (!userQuery) {
+            llmOutput.innerHTML = '<p style="color:red;">Please enter a question to explore the concept!</p>';
+            return;
+        }
+
+        const topicContent = topics[currentTopic].replace(/<[^>]*>?/gm, ' ').slice(0, 1000); // Max 1000 chars of context
+        const systemPrompt = `You are a helpful Quantum Physics Tutor. Explain complex quantum computing concepts clearly and concisely. The user's query relates to the current topic: "${currentTopic}". Use the following context about the topic if relevant: "${topicContent}". Provide a clear and easy-to-understand answer in simple paragraphs.`;
+
+        llmOutput.innerHTML = '';
+        loader.style.display = 'block';
+        button.disabled = true;
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            tools: [{ "google_search": {} }],
+        };
+
+        try {
+            const response = await exponentialBackoffFetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate an explanation right now.";
+            llmOutput.innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+
+        } catch (error) {
+            llmOutput.innerHTML = '<p style="color:red;">An error occurred while fetching the explanation. Please try again.</p>';
+            console.error("Gemini API Error:", error);
+        } finally {
+            loader.style.display = 'none';
+            button.disabled = false;
+        }
+    }
+    
+    // --- LLM Feature 2: Dynamic Quiz Generator (Structured JSON) ---
+    async function generateNewQuiz() {
+        const topicInput = document.getElementById('quizTopicInput');
+        const loader = document.getElementById('quizLoader');
+        const container = document.getElementById('quizContainer');
+        const result = document.getElementById('result');
+
+        const topic = topicInput.value.trim() || "Quantum Computing Fundamentals";
+        const userQuery = `Generate 5 multiple-choice questions about the quantum computing topic: ${topic}. Each question must have exactly 4 options and the 'correct' field must be the 0-indexed number (0, 1, 2, or 3) corresponding to the correct option.`;
+
+        container.innerHTML = '';
+        result.innerHTML = '';
+        loader.style.display = 'block';
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            "q": { "type": "STRING", "description": "The question text." },
+                            "options": {
+                                "type": "ARRAY",
+                                "items": { "type": "STRING" },
+                                "description": "Exactly four answer options."
+                            },
+                            "correct": { "type": "INTEGER", "description": "The 0-indexed position of the correct option (0, 1, 2, or 3)." }
+                        },
+                        required: ["q", "options", "correct"]
+                    }
+                }
+            }
+        };
+
+        try {
+            const response = await exponentialBackoffFetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const resultJson = await response.json();
+            const jsonText = resultJson.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (jsonText) {
+                const newQuestions = JSON.parse(jsonText);
+                if (Array.isArray(newQuestions) && newQuestions.length > 0) {
+                    quizQuestions = newQuestions.map((q, index) => ({
+                        ...q,
+                        q: `${index + 1}. ${q.q.replace(/^[0-9]\.\s*/, '')}` // Reformat question numbering
+                    }));
+                    currentQuestion = 0;
+                    score = 0;
+                    renderQuiz();
+                } else {
+                    container.innerHTML = '<p style="color:red;">Generator failed to return a valid quiz structure.</p>';
+                }
+            } else {
+                container.innerHTML = '<p style="color:red;">Sorry, I couldn\'t generate a new quiz right now. Try a different topic!</p>';
+            }
+
+        } catch (error) {
+            container.innerHTML = '<p style="color:red;">An error occurred while generating the quiz. Check the console for details.</p>';
+            console.error("Gemini API Error:", error);
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+    
+    // --- Portal Logic ---
 
     function showInfo(topic) {
       document.getElementById("mainGrid").style.display = "none";
       const contentDiv = document.getElementById("content");
       contentDiv.style.display = "block";
-      contentDiv.innerHTML = topics[topic] + `<br><button onclick="backToPortal()">⬅️ Back to Portal</button>`;
-      if (topic === "quiz") renderQuiz();
+      currentTopic = topic;
+
+      let topicHTML = topics[topic];
+      
+      // Add Concept Expander UI if it's not the quiz page
+      if (topic !== 'quiz') {
+        topicHTML += `
+            <div style="margin-top: 40px; border-top: 1px solid rgba(0,255,242,0.2); padding-top: 20px;">
+                <h3>✨ Quantum Concept Expander</h3>
+                <input type="text" id="conceptQuery" placeholder="Ask a follow-up question (e.g., 'What is Grover's algorithm?')">
+                <button id="llmButton" onclick="generateConceptExplanation()">✨ Explain</button>
+                <div class="loader" id="llmLoader"></div>
+                <div id="llmOutput" class="llm-output">Ask a question above to get an instant explanation!</div>
+            </div>
+        `;
+      }
+
+      contentDiv.innerHTML = topicHTML + `<br><button onclick="backToPortal()">⬅️ Back to Portal</button>`;
+      
+      if (topic === "quiz") {
+          // Initialize static quiz on load, if no dynamic quiz has been generated yet
+          if (quizQuestions.length > 0) renderQuiz();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -245,11 +420,20 @@
 
     function showQuestion(index) {
       const container = document.getElementById("quizContainer");
-      container.innerHTML = "";
+      document.getElementById("result").innerHTML = "";
+
+      if (index >= quizQuestions.length) {
+         container.innerHTML = `<h3>Quiz Complete!</h3>`;
+         document.getElementById("result").innerHTML = `🎉 <strong>Well done!</strong> Final Score: ${score}/${quizQuestions.length}. <button onclick="backToPortal()">Return Home</button>`;
+         return;
+      }
+      
       const q = quizQuestions[index];
+      container.innerHTML = "";
 
       const div = document.createElement("div");
       div.innerHTML = `<p><strong>${q.q}</strong></p>`;
+      
       q.options.forEach((opt, idx) => {
         const btn = document.createElement("button");
         btn.textContent = opt;
@@ -260,16 +444,11 @@
       container.appendChild(div);
 
       const nextBtn = document.createElement("button");
-      nextBtn.textContent = "Next ➡️";
+      nextBtn.textContent = "Next Question ➡️";
       nextBtn.disabled = true;
       nextBtn.onclick = () => {
         currentQuestion++;
-        if(currentQuestion < quizQuestions.length){
-          showQuestion(currentQuestion);
-        } else {
-          document.getElementById("quizContainer").innerHTML = "";
-          document.getElementById("result").innerHTML = `😊 <strong>Well done!</strong> Final Score: ${score}/${quizQuestions.length}`;
-        }
+        showQuestion(currentQuestion);
       };
       container.appendChild(nextBtn);
 
@@ -279,9 +458,11 @@
         if(selectedIdx === q.correct) {
           buttons[selectedIdx].style.backgroundColor = "#00ff88";
           score++;
+          document.getElementById("result").innerHTML = '✅ Correct!';
         } else {
           buttons[selectedIdx].style.backgroundColor = "#ff0044";
           buttons[q.correct].style.backgroundColor = "#00ff88";
+          document.getElementById("result").innerHTML = '❌ Incorrect. The correct answer is highlighted.';
         }
         nextBtn.disabled = false;
       }
