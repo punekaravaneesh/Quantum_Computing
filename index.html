@@ -16,7 +16,7 @@
     }
     h1 { font-size: 2.5em; color: #00fff2; margin-top: 60px; animation: fadeIn 1s ease forwards; }
     h2 { color: #00fff2; border-bottom: 2px solid rgba(0,255,242,0.2); padding-bottom: 10px; margin-top: 20px; }
-    h3 { color: #00fff2; margin-top: 30px; } /* CHANGED: H3 color to blue */
+    h3 { color: #00fff2; margin-top: 30px; }
     p { font-size: 1.1em; color: #bbb; max-width: 800px; margin: 10px auto; animation: fadeIn 1s ease forwards; animation-delay: 0.3s; }
     ul { text-align: left; max-width: 800px; margin: 10px auto; line-height: 1.6; list-style-type: '⚡'; padding-left: 20px; }
     li { margin-bottom: 8px; padding-left: 10px; }
@@ -89,9 +89,9 @@
 
     /* LLM Output and Loader */
     .llm-output {
-        margin-top: 20px; padding: 15px; border: 1px dashed #00fff2; /* CHANGED: Border to blue */
-        border-radius: 8px; background: rgba(0, 255, 242, 0.1); /* CHANGED: Background to blue */
-        min-height: 50px; color: #fff;
+        margin-top: 20px; padding: 15px; border: 1px dashed #00fff2;
+        border-radius: 8px; background: rgba(0, 255, 242, 0.1);
+        min-height: 50px; color: #fff; text-align: left;
     }
     .loader {
         border: 4px solid rgba(255, 255, 255, 0.3); border-top: 4px solid #00fff2;
@@ -128,26 +128,29 @@
   <h1> Quantum Computing Portal</h1>
   <p>Click any topic below to explore directly on this page.</p>
 
-  <!-- Content Grid (5 Up, 1 Down) -->
+  <!-- Content Grid (4 Up, 3 Down) -->
   <div id="mainGrid">
     <div class="card-row">
         <div class="card" onclick="showInfo('computing')">🧠 What is Computing</div>
         <div class="card" onclick="showInfo('superposition')">⚛️ Superposition</div>
         <div class="card" onclick="showInfo('interference')">🌊 Interference</div>
         <div class="card" onclick="showInfo('future')">🔮 The Future</div>
-        <div class="card" onclick="showInfo('summary')">🌟 Summary</div>
     </div>
     <div class="card-row">
+        <div class="card" onclick="showInfo('summary')">🌟 Summary</div>
         <div class="card" onclick="showInfo('quiz')">🧩 Quiz</div>
+        <div class="card" onclick="showInfo('assistant')">🤖 Quantum Assistant</div>
     </div>
   </div>
 
+  <!-- The globalAssistant div is now removed from the main body -->
+  
   <div id="content"></div>
   <footer>Created with 💙 for Quantum Enthusiasts</footer>
 
   <script>
     // --- Global Configuration for Gemini API ---
-    const apiKey = "AIzaSyAdCvooJXJCzngl-DuGf7av8XFAhHx46xU";
+    const apiKey = "";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
     // --- Utility Functions ---
@@ -236,6 +239,18 @@
         </div>
         <div id="quizContainer"></div>
         <p id="result"></p>
+      `,
+      assistant: `
+        <h2>🤖 Quantum Assistant</h2>
+        <p>Ask any question about quantum computing below. The assistant uses Google Search grounding to provide accurate, up-to-date explanations.</p>
+        <div style="max-width: 90%; margin: 40px auto; padding: 20px; border-radius: 12px; background: rgba(0,255,242,0.05); border: 1px solid rgba(0,255,242,0.2);">
+            <input type="text" id="globalConceptQuery" placeholder="Ask any question about quantum computing (e.g., 'What is Shor's algorithm?')">
+            <div style="text-align: center;">
+                <button id="globalLlmButton" onclick="generateGlobalExplanation()">✨ Ask Assistant</button>
+            </div>
+            <div class="loader" id="globalLlmLoader"></div>
+            <div id="globalLlmOutput" class="llm-output">Ask a question above to get an instant explanation.</div>
+        </div>
       `
     };
 
@@ -256,21 +271,20 @@
     let currentTopic = '';
     let currentQuestion = 0;
 
-    // --- LLM Feature 1: Concept Expander ---
-    async function generateConceptExplanation() {
-        const queryInput = document.getElementById('conceptQuery');
-        const llmOutput = document.getElementById('llmOutput');
-        const loader = document.getElementById('llmLoader');
-        const button = document.getElementById('llmButton');
+    // --- LLM Feature 1: Global Quantum Assistant ---
+    async function generateGlobalExplanation() {
+        const queryInput = document.getElementById('globalConceptQuery');
+        const llmOutput = document.getElementById('globalLlmOutput');
+        const loader = document.getElementById('globalLlmLoader');
+        const button = document.getElementById('globalLlmButton');
 
         const userQuery = queryInput.value.trim();
         if (!userQuery) {
-            llmOutput.innerHTML = '<p style="color:red;">Please enter a question to explore the concept!</p>';
+            llmOutput.innerHTML = '<p style="color:red;">Please enter a question to get an explanation!</p>';
             return;
         }
 
-        const topicContent = topics[currentTopic].replace(/<[^>]*>?/gm, ' ').slice(0, 1000); // Max 1000 chars of context
-        const systemPrompt = `You are a helpful Quantum Physics Tutor. Explain complex quantum computing concepts clearly and concisely. The user's query relates to the current topic: "${currentTopic}". Use the following context about the topic if relevant: "${topicContent}". Provide a clear and easy-to-understand answer in simple paragraphs.`;
+        const systemPrompt = `You are an expert Quantum Physics Tutor. Explain the user's query clearly and concisely, focusing on quantum computing concepts. Provide a clear and easy-to-understand answer in simple paragraphs.`;
 
         llmOutput.innerHTML = '';
         loader.style.display = 'block';
@@ -291,7 +305,15 @@
 
             const result = await response.json();
             const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate an explanation right now.";
-            llmOutput.innerHTML = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+            
+            // Append the friendly message
+            const closing = "Thanks for asking! 😊";
+            // Replace newlines with closing/opening P tags for proper HTML formatting
+            const contentHtml = `<p>${text.replace(/\n/g, '</p><p>')}</p>`;
+            // Append the closing message in its own paragraph, styled strong
+            const responseHtml = `${contentHtml}<p style="margin-top: 15px;"><strong>${closing}</strong></p>`;
+            
+            llmOutput.innerHTML = responseHtml;
 
         } catch (error) {
             llmOutput.innerHTML = '<p style="color:red;">An error occurred while fetching the explanation. Please try again.</p>';
@@ -378,31 +400,19 @@
 
     function showInfo(topic) {
       document.getElementById("mainGrid").style.display = "none";
+      
       const contentDiv = document.getElementById("content");
       contentDiv.style.display = "block";
       currentTopic = topic;
 
       let topicHTML = topics[topic];
       
-      // Add Concept Expander UI if it's not the quiz page
-      if (topic !== 'quiz') {
-        topicHTML += `
-            <div style="margin-top: 40px; border-top: 1px solid rgba(0,255,242,0.2); padding-top: 20px;">
-                <h3>✨ Quantum Concept Expander</h3>
-                <input type="text" id="conceptQuery" placeholder="Ask a follow-up question (e.g., 'What is Grover's algorithm?')">
-                <button id="llmButton" onclick="generateConceptExplanation()">✨ Explain</button>
-                <div class="loader" id="llmLoader"></div>
-                <div id="llmOutput" class="llm-output">Ask a question above to get an instant explanation!</div>
-            </div>
-        `;
-      }
-
       contentDiv.innerHTML = topicHTML + `<br><button onclick="backToPortal()">⬅️ Back to Portal</button>`;
       
-      if (topic === "quiz") {
-          // Initialize static quiz on load, if no dynamic quiz has been generated yet
-          if (quizQuestions.length > 0) renderQuiz();
+      if (topic === "quiz" && quizQuestions.length > 0) {
+          renderQuiz();
       }
+      
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -470,4 +480,3 @@
   </script>
 </body>
 </html>
-
