@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Quantum Computing Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght<:400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* Global Styles */
     body {
@@ -76,12 +76,14 @@
       background-color: #00fff2; border: none;
       padding: 10px 20px; color: #000; font-weight: bold;
       cursor: pointer; border-radius: 5px; 
-      /* INCREASED HORIZONTAL MARGIN HERE */
       margin: 10px 15px; 
       transition: 0.3s;
     }
     button:hover:not([disabled]) { background-color: #ff00ff; color: white; }
     button[disabled] { opacity: 0.5; cursor: not-allowed; }
+    /* Quiz Specific Colors */
+    .quiz-button-correct { background-color: #00ff88 !important; color: black !important; }
+    .quiz-button-incorrect { background-color: #ff0044 !important; color: white !important; }
 
     input[type="text"] {
         padding: 10px; border-radius: 5px; border: 1px solid #00fff2;
@@ -145,14 +147,14 @@
     </div>
   </div>
 
-  <!-- The globalAssistant div is now removed from the main body -->
-  
   <div id="content"></div>
   <footer>Created with 💙 for Quantum Enthusiasts</footer>
 
   <script>
     // --- Global Configuration for Gemini API ---
-    const apiKey = "AIzaSyAcKuv7Zk2Mp_9jLkznfbsrdqsmU_vByQg";
+    // NOTE: API key and dynamic quiz generation have been removed as requested.
+    // Only the global assistant logic remains.
+    const apiKey = ""; // Set your API key here if needed
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
     // --- Utility Functions ---
@@ -167,7 +169,6 @@
                 if (response.status === 429 && i < maxRetries - 1) {
                     const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
                     await new Promise(resolve => setTimeout(resolve, delay));
-                    // console.warn(`Rate limit hit, retrying in ${delay / 1000}s...`);
                     continue;
                 }
                 throw new Error(`API call failed with status: ${response.status}`);
@@ -178,7 +179,6 @@
                 }
                 const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
                 await new Promise(resolve => setTimeout(resolve, delay));
-                // console.warn(`Fetch failed, retrying in ${delay / 1000}s...`);
             }
         }
     }
@@ -187,7 +187,7 @@
     // --- Core Data ---
     const topics = {
       computing: `
-        <h2>What is Quantum Computing? </h2>
+        <h2>What is Quantum Computing? </h2>
         <p>Quantum computing is an advanced field of technology that uses the laws of <strong>quantum mechanics</strong> to process information. Unlike classical computers, which use bits (0 or 1), quantum computers use <strong>qubits</strong> that can represent 0, 1, or both at once.</p>
         <p>This property allows them to perform complex calculations that classical systems would take years to complete. Quantum computing explores the subatomic world where particles behave like waves, opening new ways to manipulate data.</p>
         <ul>
@@ -232,13 +232,8 @@
         <p>Although challenges like error correction and qubit stability remain, global research is advancing rapidly. As quantum computers become more reliable, they could redefine fields such as cybersecurity, materials science, and artificial intelligence.</p>
       `,
       quiz: `
-        <h2>Quantum Computing Quiz</h2>
-        <div id="quizGeneratorUI">
-            <h3>✨ Generate a Custom Quiz</h3>
-            <input type="text" id="quizTopicInput" placeholder="Enter a quantum topic (e.g., 'Quantum Entanglement')" value="Quantum Entanglement">
-            <button onclick="generateNewQuiz()">✨ Generate Quiz (5 Qs)</button>
-            <div class="loader" id="quizLoader"></div>
-        </div>
+        <h2>🧩 Quantum Computing Quiz</h2>
+        <p>Test your knowledge with these 10 fundamental questions.</p>
         <div id="quizContainer"></div>
         <p id="result"></p>
       `,
@@ -256,24 +251,25 @@
       `
     };
 
+    // Static 10 Question Quiz Data
     let quizQuestions = [
       { q: "1. What is a qubit?", options: ["A classical bit", "A particle of light", "A quantum bit that can be 0 and 1 simultaneously", "A type of transistor"], correct: 2 },
       { q: "2. What principle allows qubits to exist in multiple states?", options: ["Entanglement", "Superposition", "Classical logic", "Magnetism"], correct: 1 },
       { q: "3. What does interference do in quantum computing?", options: ["Increases wrong answers", "Amplifies correct results", "Randomizes outputs", "Stores data"], correct: 1 },
-      { q: "4. Which company works on quantum computers?", options: ["IBM", "Instagram", "Netflix", "Spotify"], correct: 0 },
-      { q: "5. What temperature do quantum computers require?", options: ["Room temperature", "Boiling point", "Near absolute zero", "100°C"], correct: 2 },
-      { q: "6. What makes quantum computers powerful?", options: ["They are smaller", "They use electricity", "They use qubits and superposition", "They are cheaper"], correct: 2 },
+      { q: "4. Which of these is a known quantum algorithm for factoring large numbers?", options: ["Euclid's Algorithm", "Dijkstra's Algorithm", "Shor's Algorithm", "Grover's Algorithm"], correct: 2 },
+      { q: "5. What extreme condition do many superconducting quantum computers require?", options: ["High temperature (1000°C)", "Near absolute zero", "High pressure", "Strong magnetic field (Room Temp)"], correct: 1 },
+      { q: "6. What makes quantum computers powerful for certain problems?", options: ["They are smaller", "They use cheaper electricity", "They leverage quantum effects like superposition and entanglement", "They are made of silicon"], correct: 2 },
       { q: "7. What does entanglement mean?", options: ["Two qubits connected regardless of distance", "One qubit split in two", "Qubit vibration", "Error correction"], correct: 0 },
-      { q: "8. What field can benefit from quantum computing?", options: ["Cooking", "Chemistry", "Painting", "Farming"], correct: 1 },
-      { q: "9. What is the biggest challenge in quantum computing?", options: ["Speed", "Qubit stability", "Internet access", "Programming"], correct: 1 },
-      { q: "10. What might quantum computers improve?", options: ["Music quality", "Optimization problems", "Gaming graphics", "Smartphones"], correct: 1 }
+      { q: "8. What application area will most directly benefit from quantum simulation?", options: ["Cooking recipes", "Materials Science and Drug Discovery", "Classic video games", "Building roads"], correct: 1 },
+      { q: "9. What is the biggest challenge in quantum computing today?", options: ["Speed", "Qubit decoherence and error correction", "Internet access", "Programming language diversity"], correct: 1 },
+      { q: "10. What type of encryption is considered vulnerable to future quantum computers?", options: ["Post-quantum encryption", "Asymmetric RSA/ECC encryption", "Symmetric AES encryption", "One-Time Pad encryption"], correct: 1 }
     ];
 
     let score = 0;
     let currentTopic = '';
     let currentQuestion = 0;
 
-    // --- LLM Feature 1: Global Quantum Assistant ---
+    // --- LLM Feature 1: Global Quantum Assistant (KEPT) ---
     async function generateGlobalExplanation() {
         const queryInput = document.getElementById('globalConceptQuery');
         const llmOutput = document.getElementById('globalLlmOutput');
@@ -326,78 +322,6 @@
         }
     }
     
-    // --- LLM Feature 2: Dynamic Quiz Generator (Structured JSON) ---
-    async function generateNewQuiz() {
-        const topicInput = document.getElementById('quizTopicInput');
-        const loader = document.getElementById('quizLoader');
-        const container = document.getElementById('quizContainer');
-        const result = document.getElementById('result');
-
-        const topic = topicInput.value.trim() || "Quantum Computing Fundamentals";
-        const userQuery = `Generate 5 multiple-choice questions about the quantum computing topic: ${topic}. Each question must have exactly 4 options and the 'correct' field must be the 0-indexed number (0, 1, 2, or 3) corresponding to the correct option.`;
-
-        container.innerHTML = '';
-        result.innerHTML = '';
-        loader.style.display = 'block';
-
-        const payload = {
-            contents: [{ parts: [{ text: userQuery }] }],
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "ARRAY",
-                    items: {
-                        type: "OBJECT",
-                        properties: {
-                            "q": { "type": "STRING", "description": "The question text." },
-                            "options": {
-                                "type": "ARRAY",
-                                "items": { "type": "STRING" },
-                                "description": "Exactly four answer options."
-                            },
-                            "correct": { "type": "INTEGER", "description": "The 0-indexed position of the correct option (0, 1, 2, or 3)." }
-                        },
-                        required: ["q", "options", "correct"]
-                    }
-                }
-            }
-        };
-
-        try {
-            const response = await exponentialBackoffFetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const resultJson = await response.json();
-            const jsonText = resultJson.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (jsonText) {
-                const newQuestions = JSON.parse(jsonText);
-                if (Array.isArray(newQuestions) && newQuestions.length > 0) {
-                    quizQuestions = newQuestions.map((q, index) => ({
-                        ...q,
-                        q: `${index + 1}. ${q.q.replace(/^[0-9]\.\s*/, '')}` // Reformat question numbering
-                    }));
-                    currentQuestion = 0;
-                    score = 0;
-                    renderQuiz();
-                } else {
-                    container.innerHTML = '<p style="color:red;">Generator failed to return a valid quiz structure.</p>';
-                }
-            } else {
-                container.innerHTML = '<p style="color:red;">Sorry, I couldn\'t generate a new quiz right now. Try a different topic!</p>';
-            }
-
-        } catch (error) {
-            container.innerHTML = '<p style="color:red;">An error occurred while generating the quiz. Check the console for details.</p>';
-            console.error("Gemini API Error:", error);
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-    
     // --- Portal Logic ---
 
     function showInfo(topic) {
@@ -411,7 +335,10 @@
       
       contentDiv.innerHTML = topicHTML + `<br><button onclick="backToPortal()">⬅️ Back to Portal</button>`;
       
-      if (topic === "quiz" && quizQuestions.length > 0) {
+      if (topic === "quiz") {
+          // Reset and render static quiz when 'quiz' is clicked
+          currentQuestion = 0;
+          score = 0;
           renderQuiz();
       }
       
@@ -449,7 +376,7 @@
       q.options.forEach((opt, idx) => {
         const btn = document.createElement("button");
         btn.textContent = opt;
-        btn.onclick = () => selectAnswer(idx);
+        btn.onclick = () => selectAnswer(idx, btn);
         div.appendChild(btn);
       });
 
@@ -457,6 +384,7 @@
 
       const nextBtn = document.createElement("button");
       nextBtn.textContent = "Next Question ➡️";
+      nextBtn.id = 'nextQuizBtn';
       nextBtn.disabled = true;
       nextBtn.onclick = () => {
         currentQuestion++;
@@ -464,24 +392,29 @@
       };
       container.appendChild(nextBtn);
 
-      function selectAnswer(selectedIdx) {
+      function selectAnswer(selectedIdx, selectedButton) {
         const buttons = div.querySelectorAll("button");
-        buttons.forEach(b => b.disabled = true);
+        const nextButton = document.getElementById('nextQuizBtn');
+        
+        buttons.forEach(b => b.disabled = true); // Disable all options
+        
         if(selectedIdx === q.correct) {
-          buttons[selectedIdx].style.backgroundColor = "#00ff88";
+          selectedButton.classList.add("quiz-button-correct");
           score++;
-          document.getElementById("result").innerHTML = '✅ Correct!';
+          document.getElementById("result").innerHTML = '✅ **Correct!**';
         } else {
-          buttons[selectedIdx].style.backgroundColor = "#ff0044";
-          buttons[q.correct].style.backgroundColor = "#00ff88";
-          document.getElementById("result").innerHTML = '❌ Incorrect. The correct answer is highlighted.';
+          selectedButton.classList.add("quiz-button-incorrect");
+          buttons[q.options.indexOf(q.options[q.correct])].classList.add("quiz-button-correct");
+          document.getElementById("result").innerHTML = '❌ **Incorrect.** The correct answer is highlighted.';
         }
-        nextBtn.disabled = false;
+        nextButton.disabled = false;
       }
     }
+    
+    // Initial call to hide content on load
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById("content").style.display = "none";
+    });
   </script>
 </body>
 </html>
-
-
-
